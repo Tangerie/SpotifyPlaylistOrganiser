@@ -11,6 +11,12 @@ export function Arrayify(items) {
 }
 
 
+export function sleep(duration) {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, duration);
+    })
+}
+
 export async function getAllInPage(fn_name, args, opts={}) {
     let total = [];
 

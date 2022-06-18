@@ -1,14 +1,24 @@
 {
-    "summary": {
-        "to_watch": [
-            "1tgpZd798xfahOu0wo92wu",
-            "3XrfubEIgg3MHvdSmUzFtG",
-            "2Za08KWRiKWWfn2Hvdtx1h",
-            "1aAVtIyqamNQK53m4uQKts"
-        ],
-    
-        "target": "0EeHbBPVeRXOJzrR4NjYsQ"
-    },
+    "summaries": [
+        {
+            "to_watch": [
+                "1aAVtIyqamNQK53m4uQKts",
+                "3XrfubEIgg3MHvdSmUzFtG",
+                "3dWoCuef3v8abp4FLEwfsY"
+            ],
+        
+            "target": "0EeHbBPVeRXOJzrR4NjYsQ"
+        },
+        {
+            "to_watch": "*",
+            "exclude": [
+                "6bELO4z5QWd5Ipjl5T983E",
+                "6bELO4z5QWd5Ipjl5T983E"
+            ],
+        
+            "target": "1iCwuT3fIO5qplvfatUkpF"
+        }
+    ],
 
     "discover_weekly": {
         "source": "37i9dQZEVXcG1QGPVdJmsf",

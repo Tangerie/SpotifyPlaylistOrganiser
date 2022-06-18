@@ -1,8 +1,7 @@
-import { GLOBAL_PREFIX } from './constants.js';
 import fetch from 'node-fetch';
 import { addToPlaylist, dateToString } from './util.js';
 
-const PREFIX = GLOBAL_PREFIX + "wk_"
+const PREFIX = "weekly:"
 
 
 
@@ -29,12 +28,12 @@ export async function checkWeekly() {
                 }
             )
     
-            await redis.set(PREFIX + config.discover_weekly.target, res.body.snapshot_id);
+            // await redis.set(PREFIX + config.discover_weekly.target, res.body.snapshot_id);
         }
 
+        await redis.set(id, weekly.body.snapshot_id);
     }
 
-    await redis.set(id, weekly.body.snapshot_id);
 }
 
 async function updateCover() {

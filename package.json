@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tangerie/spotify-manager": "^1.0.2",
     "dotenv": "^16.0.1",
     "esm": "^3.2.25",
     "node-fetch": "^3.2.6",

@@ -1,25 +1,35 @@
 import SpotifyWebApi from 'spotify-web-api-node';
-import { GLOBAL_PREFIX } from './constants.js';
 
-import fs from "fs";
 import { addToPlaylist, Arrayify, getTracksInPlaylist } from './util.js';
 
-const PREFIX = GLOBAL_PREFIX + "sm_"
+const PREFIX = "summary:"
 
-/**
- * 
- * @param {import('redis').RedisredisType} _redis 
- * @param {SpotifyWebApi} _spotify 
- */
 export async function checkSummary() {
-    await Promise.all(config.summary.to_watch.map(id => checkPlaylist(id)))
+    for(const summary of config.summaries) {
+        let to_watch = summary.to_watch;
+
+        if(to_watch == '*') {
+            to_watch = (await spotify.getUserPlaylists()).body.items
+                .filter(p => p.owner.id == me.id && p.id != summary.target)
+                .map(p => p.id);
+        }
+
+        if(summary.exclude) {
+            to_watch = to_watch.filter(x => !summary.exclude.includes(x));
+        }
+
+        for(const playlist of to_watch) {
+            await checkPlaylist(playlist, summary.target);
+        }
+    }
 }
 
 /**
  * 
  * @param {import('./index.js').PlaylistID} id 
+ * @param {import('./index.js').PlaylistID} target_id 
  */
-async function checkPlaylist(id) {
+async function checkPlaylist(id, target_id) {
     const playlist = (await spotify.getPlaylist(id)).body;
 
     const p_id = PREFIX + playlist.id;
@@ -28,11 +38,15 @@ async function checkPlaylist(id) {
     if(old_snapshot != playlist.snapshot_id) {
         console.log(`${playlist.name} [${playlist.id}] Changed`);
 
-        const to_add = (await getTracksInPlaylist(id)).map(t => t.track.uri);
+        const to_add = (await getTracksInPlaylist(id))
+            .filter(t => !t.is_local)
+            .map(t => t.track.uri);
 
-        const res = await addToPlaylist(config.summary.target, to_add);
+        const res = await addToPlaylist(target_id, to_add);
 
+        
         if(res) {
+            console.log(`${to_add.length} New Songs`);
             playlist.snapshot_id = res.body.snapshot_id;
         }
     } 

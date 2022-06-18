@@ -1,37 +1,37 @@
 import dotenv from "dotenv";
-import { getAuthedSpotify } from './auth.js';
-import { getDatabase } from './database.js';
 import process from 'process';
 
 import fs from "fs";
-
-import { checkSummary } from "./summary.js";
+import { ALL_SCOPES, createSpotifyClient } from "@tangerie/spotify-manager";
+import { sleep } from "./util.js";
+import { createClient } from "redis";
 import { checkWeekly } from "./weekly.js";
-import { Checker } from "./checker.js";
+import { checkSummary } from "./summary.js";
 
 dotenv.config();
 
-const client = getDatabase();
+global.redis = createClient({
+    url: process.env.REDIS_SERVER
+})
 
-await client.connect();
+await redis.connect();
 console.log("Database Connected");
 
-const spotify = await getAuthedSpotify(client);
 
-globalThis.spotify = spotify;
-globalThis.redis = client;
+global.spotify = await createSpotifyClient(redis, ALL_SCOPES);
+
+await redis.select(process.env.REDIS_DB_NUM);
+
+global.me = (await spotify.getMe()).body;
 
 /** @type {import("./index.js").Config} */
-const config = JSON.parse(fs.readFileSync("config/config.json"));
-
-globalThis.config = config;
-
-await client.disconnect();
-console.log("Database Disconnected");
+global.config = JSON.parse(fs.readFileSync("config/config.json"));
 
 
-await Checker();
-setInterval(Checker, 60 * 1000);
+while(true) {
+    await checkWeekly();
+    await checkSummary();
+}
 
 // Pause Execution
 process.stdin.resume();
