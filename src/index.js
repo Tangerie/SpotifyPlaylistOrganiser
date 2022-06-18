@@ -31,6 +31,8 @@ global.config = JSON.parse(fs.readFileSync("config/config.json"));
 while(true) {
     await checkWeekly();
     await checkSummary();
+
+    await sleep(60 * 1000);
 }
 
 // Pause Execution
